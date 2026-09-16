@@ -7,10 +7,10 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: main
+      revision: acfd8e5ea76cf23ad1c9b6b99848f97a95224257  # v0.3-branch
       import: app/west.yml
     - name: ergonautkb-zmk-module
       remote: ergonautkb
-      revision: main
+      revision: 0baf6fb036595f4c16bde895b8804123e6b4cf0d  # main
   self:
     path: config

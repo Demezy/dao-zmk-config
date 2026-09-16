@@ -21,6 +21,29 @@ This layout is heavily inspired by [this](https://github.com/KGOH/Jian-Info)
 
 Because of current ZMK limitations, Dao44 keymap is in the branch [dao44](https://github.com/yumagulovrn/dao-zmk-config/tree/dao44)
 
+## Building locally with Nix
+
+Works on Linux and macOS (x86_64/aarch64) with flakes enabled:
+
+```sh
+nix build                    # dao_left + dao_right -> result/zmk_{left,right}.uf2
+nix build .#firmware-studio  # same, with ZMK Studio enabled on the left (central) half
+nix build .#settings-reset   # settings_reset for nice_nano_v2
+nix run .#flash              # interactive flasher (Linux only: needs lsblk/udisks)
+```
+
+Dependencies come from `config/west.yml`, which pins every project to a commit so the
+fixed-output `zephyrDepsHash` in `flake.nix` stays valid. To bump them, run `nix run .#update`
+(it follows the branch named in the `# <branch>` comment next to each revision). The first
+build fetches Zephyr with full git history and takes ~10 minutes.
+
+Why ZMK is pinned to `v0.3-branch`: the Dao board in `ergonautkb-zmk-module` uses Zephyr's
+legacy hardware model (HWMv1), and ZMK `main` moved to Zephyr 4.1, which fails in Kconfig for
+`dao_left`/`dao_right`. Move to `main` only once the board gains a `board.yml` (HWMv2).
+
+The flake also patches nanopb (ZMK Studio builds) to use `importlib.resources`, since the
+nanopb in ZMK v0.3 imports `pkg_resources`, removed from current setuptools.
+
 ## FAQ
 
 - [FAQ](#faq)

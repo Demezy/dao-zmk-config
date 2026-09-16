@@ -1,0 +1,23 @@
+name: nix build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix build .#firmware .#firmware-studio .#settings-reset -L
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: firmware-nix
+          path: |
+            result/*.uf2
+            result-1/*.uf2
+            result-2/*.uf2
